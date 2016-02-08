@@ -58,6 +58,42 @@ module CouchRest
         end
         alias :find! :get!
 
+        # Load an array of documents from the database by an arrary of ids
+        # No exceptions will be raised if none of the documents were found
+        #
+        # ==== Returns
+        # [Object::] if the document was found
+        # or
+        # []
+        #
+        # === Parameters
+        # ids<Array>:: Documents IDs
+        # db<Database>:: optional option to pass a custom database to use
+        def get_bulk(ids, db = database)
+          get_bulk!(ids, db)
+        rescue CouchRest::Model::DocumentsNotFound
+          []
+        end
+        alias :find_all :get_bulk
+
+        # Load an array of documents from the database by an arrary of ids
+        # An exception will be raised if none of the documents were found
+        #
+        # ==== Returns
+        # [Object::] if the document was found
+        # or
+        # Exception
+        #
+        # === Parameters
+        # ids<Array>:: Documents IDs
+        # db<Database>:: optional option to pass a custom database to use
+        def get_bulk!(ids, db = database)
+          docs = db.all_docs(:keys => ids, :include_docs => true)
+          raise CouchRest::Model::DocumentsNotFound if docs.blank?
+          docs["rows"].map{|row| build_from_database(row["doc"])}
+        end
+        alias :find_all! :get_bulk!
+
       end
 
     end

@@ -22,6 +22,8 @@ module CouchRest
 
     class DocumentNotFound < Errors::CouchRestModelError; end
 
+    class DocumentsNotFound < Errors::CouchRestModelError; end
+
     class DatabaseNotDefined < Errors::CouchRestModelError
       def initialize(msg = nil)
         msg ||= "Database must be defined in model or view!"

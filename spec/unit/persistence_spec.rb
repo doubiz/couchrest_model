@@ -44,6 +44,20 @@ describe CouchRest::Model::Persistence do
       saved_obj.set_by_proc.should be_an_instance_of(Time)
     end
   end
+
+  describe "bulk retrieving" do 
+    it "should retrieve multiple documents given an array of ids" do
+      @obj.name = "first object"
+      @obj.save!
+      @obj_2 = WithDefaultValues.new
+      @obj_2.name = "second object"
+      @obj_2.save!
+      saved_objs = WithDefaultValues.find_all([@obj.id, @obj_2.id])
+      saved_objs.first.name.should eq("first object")
+      saved_objs.last.name.should eq("second object")
+      saved_objs.length.should eq(2)
+    end
+  end
  
   describe "creating a model" do
 
